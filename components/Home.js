@@ -1,4 +1,3 @@
-/* eslint-disable no-use-before-define */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/react-in-jsx-scope */
 import { StatusBar } from 'expo-status-bar'
@@ -12,33 +11,16 @@ import {
   TouchableOpacity,
   View
 } from 'react-native'
+import TodoList from './components/TodoList'
 import { AntDesign } from '@expo/vector-icons'
 import Task from './components/Task'
 import { useState } from 'react'
 import Edit from './components/Edit'
-import { NavigationContainer } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
-const Stack = createNativeStackNavigator()
-
-export default function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Edit" component={Edit} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  )
-}
-
-function Home({ navigation }) {
+export default function Home1({ navigation }) {
   const tasks = []
   const [taskText, setTaskText] = useState('')
   const [tasksList, setTasksList] = useState([])
-  // if (route.params.newTaskList != null) {
-  //   setTasksList(route.params.newTaskList)
-  // }
   const [editText, setEditText] = useState('')
   const del = (delTask) => {
     console.log(tasksList)
@@ -76,15 +58,18 @@ function Home({ navigation }) {
                     onPress={() =>
                       navigation.navigate('Edit', {
                         text: task,
-                        list: tasksList,
-                        id: id
+                        list: tasksList
                       })
                     }
                   >
                     <Text style={styles.textEdit}>Edit</Text>
                   </TouchableOpacity>
                 </View>
-                <Task taskDes={task} />
+                <TextInput
+                  value={editText}
+                  defaultValue={task}
+                  onChangeText={(newTaskText) => setEditText(newTaskText)}
+                />
               </View>
             ))}
           </ScrollView>
