@@ -5,13 +5,15 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native'
 function Task(props) {
   return (
     <>
-      <TouchableOpacity>
-        <Text>{props.taskDes}</Text>
-      </TouchableOpacity>
+      <Text>{props.taskDes}</Text>
     </>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  task: {
+    backgroundColor: '#c9c7bf'
+  }
+})
 
 export default Task

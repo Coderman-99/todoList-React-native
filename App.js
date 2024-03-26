@@ -10,7 +10,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  PanResponder
 } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 import Task from './components/Task'
@@ -60,19 +61,43 @@ function Home({ navigation }) {
     setTaskText('')
     console.log(tasksList)
   }
+
+  const panResponder = (id) => {
+    let dx = 0
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (_, gestureState) => {
+        dx = gestureState.dx
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (dx > 50) {
+          del(id)
+        }
+      }
+    })
+  }
+
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <Text style={styles.text}>Today Todo Tasks</Text>
+        <Text style={styles.appTitle}>Today Todo Tasks</Text>
         <View style={styles.bodyList}>
           <ScrollView>
             {tasksList.map((task, id) => (
-              <View key={id} style={styles.task}>
+              <View
+                {...panResponder(id).panHandlers}
+                key={id}
+                style={styles.task}
+              >
                 <View style={styles.delEditContainer}>
-                  <TouchableOpacity onPress={() => del(task)}>
-                    <Text style={styles.textDel}>Delete</Text>
+                  <TouchableOpacity
+                    style={styles.buttonDel}
+                    onPress={() => del(task)}
+                  >
+                    <Text>Delete</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
+                    style={styles.buttonEdit}
                     onPress={() =>
                       navigation.navigate('Edit', {
                         text: task,
@@ -81,10 +106,12 @@ function Home({ navigation }) {
                       })
                     }
                   >
-                    <Text style={styles.textEdit}>Edit</Text>
+                    <Text>Edit</Text>
                   </TouchableOpacity>
                 </View>
-                <Task taskDes={task} />
+                <TouchableOpacity style={styles.taskContent}>
+                  <Task taskDes={task} />
+                </TouchableOpacity>
               </View>
             ))}
           </ScrollView>
@@ -94,7 +121,7 @@ function Home({ navigation }) {
             <AntDesign name="pluscircleo" size={50} color="black" />
           </TouchableOpacity>
           <TextInput
-            style={styles.taskAdd}
+            style={styles.taskInput}
             placeholder="Add task here"
             onChangeText={(newTaskText) => setTaskText(newTaskText)}
             defaultValue={taskText}
@@ -113,10 +140,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'start',
-    marginRight: 10
+    marginRight: 10,
+    borderRightWidth: 2
   },
   container: {
-    backgroundColor: '#8c82ff',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -134,7 +161,6 @@ const styles = StyleSheet.create({
   taskContainer: {
     padding: 10,
     borderWidth: 2,
-    backgroundColor: 'green',
     marginTop: 10,
     marginBottom: 10,
     width: 300,
@@ -142,50 +168,66 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   taskAddContainer: {
+    backgroundColor: '#e1e4e8',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'center',
-    marginRight: 50,
-    backgroundColor: 'red',
-    maxHeight: '70%'
+    maxHeight: '70%',
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5
   },
-  taskAdd: {
-    backgroundColor: 'green',
+  taskInput: {
     marginLeft: 50,
     width: 300,
     maxWidth: '50%',
     height: 50,
-    borderRadius: 10
+    borderRadius: 10,
+    fontSize: 20
   },
   addTaskButton_active: {
-    backgroundColor: 'blue',
     borderWidth: 5
   },
   task: {
+    backgroundColor: '#e1e4e8',
+    borderRadius: 10,
     width: 300,
     padding: 10,
-    backgroundColor: 'green',
     marginTop: 10,
     marginBottom: 10,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center'
   },
-  text: {
+  appTitle: {
     fontSize: 32,
     fontWeight: 'bold'
   },
-  textDel: {
+  buttonDel: {
+    backgroundColor: '#f799a1',
+    borderTopRightRadius: 5,
+    borderTopLeftRadius: 5,
     padding: 5,
-    backgroundColor: 'red',
     width: 50,
-    textAlign: 'center'
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 5
   },
-  textEdit: {
+  buttonEdit: {
+    backgroundColor: '#a2f5ce',
+    borderBottomRightRadius: 5,
+    borderBottomLeftRadius: 5,
     padding: 5,
-    backgroundColor: 'green',
     width: 50,
-    textAlign: 'center'
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 5
+  },
+  taskContent: {
+    maxWidth: '70%'
   }
 })

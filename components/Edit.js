@@ -28,6 +28,7 @@ function Edit({ navigation, route }) {
         onChangeText={(newText) => handleButton(newText, route.params.text)}
       />
       <Button
+        style={styles.buttonSave}
         title="Save"
         onPress={() => navigation.navigate('Home', { newTaskList: newList })}
       />
@@ -36,15 +37,9 @@ function Edit({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  buttonDel: {
+  buttonSave: {
     padding: 2,
     backgroundColor: 'red',
-    borderRadius: 10,
-    width: 50
-  },
-  buttonEdit: {
-    padding: 2,
-    backgroundColor: 'green',
     borderRadius: 10,
     width: 50
   }
