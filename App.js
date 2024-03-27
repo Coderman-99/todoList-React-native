@@ -27,6 +27,7 @@ import {
   createNativeStackNavigator,
   useHeaderHeight
 } from '@react-navigation/native-stack'
+import IsCheck from './components/IsCheck'
 
 const Stack = createNativeStackNavigator()
 
@@ -83,18 +84,6 @@ function Home({ navigation }) {
     })
   }
 
-  const [isCheck, setIsCheck] = useState(0)
-  const [changeCheckcolor, setChangcheckColor] = useState('black')
-  const HandleCheckButton = (ischeck) => {
-    if (isCheck === 0) {
-      setIsCheck(1)
-      setChangcheckColor('green')
-    } else {
-      setIsCheck(0)
-      setChangcheckColor('black')
-    }
-  }
-
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -130,16 +119,7 @@ function Home({ navigation }) {
                       <Task taskDes={task} />
                     </TouchableOpacity>
                   </View>
-                  <TouchableOpacity
-                    style={{ alignSelf: 'center', margin: 10 }}
-                    onPress={() => HandleCheckButton()}
-                  >
-                    <AntDesign
-                      name="checkcircle"
-                      size={24}
-                      color={changeCheckcolor}
-                    />
-                  </TouchableOpacity>
+                  <IsCheck />
                 </View>
               </>
             ))}
