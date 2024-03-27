@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
   TextInput,
   Button,
-  SafeAreaView
+  SafeAreaView,
+  Keyboard,
+  TouchableWithoutFeedback
 } from 'react-native'
 
 function Edit({ navigation, route }) {
@@ -20,28 +22,45 @@ function Edit({ navigation, route }) {
     const nList = route.params.list.splice(route.params.id, 1, text)
     setNewList(nList)
   }
+
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <TextInput
+        style={styles.textInput}
         value={text}
         defaultValue={route.params.text}
         onChangeText={(newText) => handleButton(newText, route.params.text)}
+        multiline={true}
       />
-      <Button
-        style={styles.buttonSave}
-        title="Save"
-        onPress={() => navigation.navigate('Home', { newTaskList: newList })}
-      />
+      <View style={styles.buttonSave}>
+        <Button
+          title="Save"
+          onPress={() => navigation.navigate('Home', { newTaskList: newList })}
+        />
+      </View>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    margin: '5%',
+    flex: 1
+  },
+  textInput: {
+    height: 'fit-content',
+    backgroundColor: '#e1e4e8',
+    marginBottom: '5%',
+    marginTop: '5%',
+    padding: '5%',
+    borderRadius: 10
+  },
+
   buttonSave: {
     padding: 2,
-    backgroundColor: 'red',
     borderRadius: 10,
-    width: 50
+    width: '50%',
+    alignSelf: 'center'
   }
 })
 

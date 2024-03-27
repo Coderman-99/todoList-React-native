@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/react-in-jsx-scope */
@@ -11,14 +12,21 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  PanResponder
+  PanResponder,
+  Platform,
+  KeyboardAvoidingView,
+  keyboardVerticalOffset,
+  TouchableOpacityBase
 } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 import Task from './components/Task'
 import { useState } from 'react'
 import Edit from './components/Edit'
 import { NavigationContainer } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import {
+  createNativeStackNavigator,
+  useHeaderHeight
+} from '@react-navigation/native-stack'
 
 const Stack = createNativeStackNavigator()
 
@@ -37,9 +45,7 @@ function Home({ navigation }) {
   const tasks = []
   const [taskText, setTaskText] = useState('')
   const [tasksList, setTasksList] = useState([])
-  // if (route.params.newTaskList != null) {
-  //   setTasksList(route.params.newTaskList)
-  // }
+
   const [editText, setEditText] = useState('')
   const del = (delTask) => {
     console.log(tasksList)
@@ -77,6 +83,18 @@ function Home({ navigation }) {
     })
   }
 
+  const [isCheck, setIsCheck] = useState(0)
+  const [changeCheckcolor, setChangcheckColor] = useState('black')
+  const HandleCheckButton = (ischeck) => {
+    if (isCheck === 0) {
+      setIsCheck(1)
+      setChangcheckColor('green')
+    } else {
+      setIsCheck(0)
+      setChangcheckColor('black')
+    }
+  }
+
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -84,56 +102,78 @@ function Home({ navigation }) {
         <View style={styles.bodyList}>
           <ScrollView>
             {tasksList.map((task, id) => (
-              <View
-                {...panResponder(id).panHandlers}
-                key={id}
-                style={styles.task}
-              >
-                <View style={styles.delEditContainer}>
-                  <TouchableOpacity
-                    style={styles.buttonDel}
-                    onPress={() => del(task)}
+              <>
+                <View style={{ flexDirection: 'row' }}>
+                  <View
+                    {...panResponder(id).panHandlers}
+                    key={id}
+                    style={styles.task}
                   >
-                    <Text>Delete</Text>
-                  </TouchableOpacity>
+                    <View style={styles.delEditContainer}>
+                      <TouchableOpacity
+                        style={styles.buttonDel}
+                        onPress={() => del(task)}
+                      >
+                        <Text>Delete</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.buttonEdit}
+                        onPress={() =>
+                          navigation.navigate('Edit', {
+                            text: task,
+                            list: tasksList,
+                            id: id
+                          })
+                        }
+                      >
+                        <Text>Edit</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity style={styles.taskContent}>
+                      <Task taskDes={task} />
+                    </TouchableOpacity>
+                  </View>
                   <TouchableOpacity
-                    style={styles.buttonEdit}
-                    onPress={() =>
-                      navigation.navigate('Edit', {
-                        text: task,
-                        list: tasksList,
-                        id: id
-                      })
-                    }
+                    style={{ alignSelf: 'center', margin: 10 }}
+                    onPress={() => HandleCheckButton()}
                   >
-                    <Text>Edit</Text>
+                    <AntDesign
+                      name="checkcircle"
+                      size={24}
+                      color={changeCheckcolor}
+                    />
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.taskContent}>
-                  <Task taskDes={task} />
-                </TouchableOpacity>
-              </View>
+              </>
             ))}
           </ScrollView>
         </View>
-        <View style={styles.taskAddContainer}>
-          <TouchableOpacity onPress={addTask}>
-            <AntDesign name="pluscircleo" size={50} color="black" />
-          </TouchableOpacity>
-          <TextInput
-            style={styles.taskInput}
-            placeholder="Add task here"
-            onChangeText={(newTaskText) => setTaskText(newTaskText)}
-            defaultValue={taskText}
-            on
-          />
-        </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+          style={styles.keyboard}
+        >
+          <View style={styles.taskAddContainer}>
+            <TouchableOpacity onPress={addTask}>
+              <AntDesign name="pluscircleo" size={50} color="black" />
+            </TouchableOpacity>
+            <TextInput
+              style={styles.taskInput}
+              placeholder="Add task here"
+              onChangeText={(newTaskText) => setTaskText(newTaskText)}
+              defaultValue={taskText}
+            />
+          </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </>
   )
 }
 
 const styles = StyleSheet.create({
+  keyboard: {
+    flexDirection: 'row'
+  },
   delEditContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -141,21 +181,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'start',
     marginRight: 10,
-    borderRightWidth: 2
+    borderRightWidth: 2,
+    paddingRight: 10
   },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '5%',
-    padding: '5%'
+    margin: '5%'
   },
   bodyList: {
     display: 'flex',
     flex: 1,
     alignItems: 'center',
-    textAlign: 'center',
-    margin: 20
+    textAlign: 'center'
   },
   bodyAdd: {},
   taskContainer: {
@@ -172,17 +211,15 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-end',
-    justifyContent: 'center',
     maxHeight: '70%',
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 5
+    borderRadius: 20,
+    maxWidth: '100%',
+    marginBottom: '7%'
   },
   taskInput: {
-    marginLeft: 50,
+    marginLeft: 10,
     width: 300,
-    maxWidth: '50%',
+    maxWidth: '70%',
     height: 50,
     borderRadius: 10,
     fontSize: 20
@@ -210,7 +247,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 5,
     borderTopLeftRadius: 5,
     padding: 5,
-    width: 50,
+    width: '100%',
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'center',
@@ -221,7 +258,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 5,
     borderBottomLeftRadius: 5,
     padding: 5,
-    width: 50,
+    width: '100%',
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'center',
