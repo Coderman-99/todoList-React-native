@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
     marginTop: '5%',
     padding: '5%',
+    paddingTop: '6%',
     borderRadius: 10
   },
 

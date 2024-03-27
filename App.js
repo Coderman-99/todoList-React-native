@@ -98,17 +98,14 @@ function Home({ navigation }) {
   return (
     <>
       <SafeAreaView style={styles.container}>
+        <StatusBar hidden={false} />
         <Text style={styles.appTitle}>Today Todo Tasks</Text>
         <View style={styles.bodyList}>
           <ScrollView>
             {tasksList.map((task, id) => (
               <>
-                <View style={{ flexDirection: 'row' }}>
-                  <View
-                    {...panResponder(id).panHandlers}
-                    key={id}
-                    style={styles.task}
-                  >
+                <View style={{ flexDirection: 'row' }} key={id}>
+                  <View {...panResponder(id).panHandlers} style={styles.task}>
                     <View style={styles.delEditContainer}>
                       <TouchableOpacity
                         style={styles.buttonDel}
